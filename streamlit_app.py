@@ -1,9 +1,8 @@
-import streamlit as st
+import streamlit as st 
 import pandas as pd
 import numpy as np
 import joblib
 import os
-import json
 from datetime import datetime, timedelta
 
 MODELS_PATH = 'models/'
@@ -185,6 +184,18 @@ def main():
 
     st.header(f"Results for: {selected_crop}")
 
+    # Initialize session state variables
+    if "simulation_ran" not in st.session_state:
+        st.session_state.simulation_ran = False
+        st.session_state.predicted_yield = None
+        st.session_state.summary_data = None
+        st.session_state.uncertainty = None
+        st.session_state.optimization_done = False
+        st.session_state.best_yield = None
+        st.session_state.best_fert = None
+        st.session_state.best_irr = None
+
+    # Run Simulation button
     if st.sidebar.button(L['run_sim']):
         predicted_yield, summary_data, uncertainty = predict_yield_with_uncertainty(
             selected_crop,
@@ -198,20 +209,28 @@ def main():
             st.warning(f"Prediction model for {selected_crop} not available or prediction failed")
             return
 
+        st.session_state.simulation_ran = True
+        st.session_state.predicted_yield = predicted_yield
+        st.session_state.summary_data = summary_data
+        st.session_state.uncertainty = uncertainty
+        st.session_state.optimization_done = False  # Reset optimization status on new simulation
+
+    # Show simulation results if simulation ran
+    if st.session_state.simulation_ran:
         st.markdown(f"## {L['predicted_yield']}")
-        st.success(f"**{predicted_yield:.2f} kg/ha**", icon="📈")
-        if uncertainty is not None:
-            st.write(f"{L['uncertainty']}: {uncertainty:.2f} kg/ha")
+        st.success(f"**{st.session_state.predicted_yield:.2f} kg/ha**", icon="📈")
+        if st.session_state.uncertainty is not None:
+            st.write(f"{L['uncertainty']}: {st.session_state.uncertainty:.2f} kg/ha")
 
         # ------------------ Model Validation & Explainability ------------------
         st.markdown(f"### {L['model_val']}")
-        # Similar validation section can be implemented here, using L[...] for labels
-        # ------------------ End Model Validation & Explainability ------------------
+        # (Validation content here if needed)
+        # -----------------------------------------------------------------------
 
         col1, col2 = st.columns(2)
         with col1:
             st.subheader(L['scenario_inputs'])
-            st.table(pd.Series(summary_data).to_frame('Value'))
+            st.table(pd.Series(st.session_state.summary_data).to_frame('Value'))
         with col2:
             st.subheader(L['comparison'])
             yield_base, _, _ = predict_yield_with_uncertainty(selected_crop, datetime.combine(planting_date, datetime.min.time()), management_inputs, 'NORMAL', models, seed=seed_val)
@@ -224,43 +243,50 @@ def main():
             st.dataframe(df_comparison, hide_index=True)
             st.markdown(f"**{L['difference']}:** **{yield_optimized - yield_base:.2f} kg/ha**")
 
-    st.markdown("---")
-    st.header(L['step10_header'])
+        st.markdown("---")
+        st.header(L['step10_header'])
 
-    if st.button(L['find_optimal']):
-        best_yield = -np.inf
-        best_fert = None
-        best_irr = None
+        # Auto-run optimization once, only if not already done
+        if not st.session_state.optimization_done:
+            best_yield = -np.inf
+            best_fert = None
+            best_irr = None
 
-        fert_range = range(50, 301, 10)
-        irr_range = range(100, 2001, 100)
+            fert_range = range(50, 301, 10)
+            irr_range = range(100, 2001, 100)
 
-        progress_bar = st.progress(0)
-        total_steps = len(fert_range) * len(irr_range)
-        step_count = 0
+            progress_bar = st.progress(0)
+            total_steps = len(fert_range) * len(irr_range)
+            step_count = 0
 
-        for fert in fert_range:
-            for irr in irr_range:
-                test_inputs = {'fertilizer_kg_ha': fert, 'irrigation_m3_ha': irr}
-                pred_yield, _, _ = predict_yield_with_uncertainty(
-                    selected_crop,
-                    datetime.combine(planting_date, datetime.min.time()),
-                    test_inputs,
-                    scenario_selection,
-                    models,
-                    seed=seed_val
-                )
-                if pred_yield is not None and pred_yield > best_yield:
-                    best_yield = pred_yield
-                    best_fert = fert
-                    best_irr = irr
+            for fert in fert_range:
+                for irr in irr_range:
+                    test_inputs = {'fertilizer_kg_ha': fert, 'irrigation_m3_ha': irr}
+                    pred_yield, _, _ = predict_yield_with_uncertainty(
+                        selected_crop,
+                        datetime.combine(planting_date, datetime.min.time()),
+                        test_inputs,
+                        scenario_selection,
+                        models,
+                        seed=seed_val
+                    )
+                    if pred_yield is not None and pred_yield > best_yield:
+                        best_yield = pred_yield
+                        best_fert = fert
+                        best_irr = irr
 
-                step_count += 1
-                progress_bar.progress(step_count / total_steps)
+                    step_count += 1
+                    progress_bar.progress(step_count / total_steps)
 
-        st.success(f"{L['optimal_fert']}: {best_fert} kg/ha")
-        st.success(f"{L['optimal_irr']}: {best_irr} m³/ha")
-        st.success(f"{L['predicted_yield_opt']}: {best_yield:.2f} kg/ha")
+            st.session_state.optimization_done = True
+            st.session_state.best_yield = best_yield
+            st.session_state.best_fert = best_fert
+            st.session_state.best_irr = best_irr
+
+        # Display optimized results directly
+        st.success(f"{L['optimal_fert']}: {st.session_state.best_fert} kg/ha")
+        st.success(f"{L['optimal_irr']}: {st.session_state.best_irr} m³/ha")
+        st.success(f"{L['predicted_yield_opt']}: {st.session_state.best_yield:.2f} kg/ha")
 
         current_yield, _, _ = predict_yield_with_uncertainty(
             selected_crop,
@@ -271,7 +297,7 @@ def main():
             seed=seed_val
         )
         if current_yield is not None:
-            diff = best_yield - current_yield
+            diff = st.session_state.best_yield - current_yield
             st.info(f"{L['improvement']}: {diff:.2f} kg/ha")
 
 
