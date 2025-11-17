@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import joblib
 import os
+import json
 from datetime import datetime, timedelta
 
 MODELS_PATH = 'models/'
@@ -37,7 +38,8 @@ LANG_DICT = {
         'optimal_fert': "Optimal Fertilizer",
         'optimal_irr': "Optimal Irrigation",
         'predicted_yield_opt': "Predicted Yield with Optimized Inputs",
-        'improvement': "Improvement over current inputs"
+        'improvement': "Improvement over current inputs",
+        'models_not_loaded': "Models not loaded. Please ensure model files exist in 'models/' directory."
     },
     'kn': {
         'title': "🌾 ಜನರೇಟಿವ್ AI ಚಾಲಿತ ಕೃಷಿ ಡಿಜಿಟಲ್ ಟ್ವಿನ್",
@@ -58,12 +60,13 @@ LANG_DICT = {
         'scenario_inputs': "ಹವಾಮಾನ ಪರಿಸ್ಥಿತಿಯಲ್ಲಿ ಉಪಯೋಗಿಸಿದ ಇನ್ಪುಟ್‌ಗಳು",
         'comparison': "ನಿರ್ವಹಣೆ 'ಎಲ್ಲಿ' ಹೋಲಿಕೆ (ಸಾಮಾನ್ಯದ ವಿರುದ್ಧ)",
         'difference': "ವ್ಯತ್ಯಾಸ (ಶ್ರೇಷ್ಠೀಕೃತ vs ಮೂಲ)",
-        'step10_header': "🔧 ಕ್ರಷಿಕರಿಗಾಗಿ ಪರಿಪೂರ್ಣತೆ",
+        'step10_header': "🔧 کریಷಿಕರಿಗಾಗಿ ಪರಿಪೂರ್ಣತೆ",
         'find_optimal': "ಪರಿಪೂರ್ಣ ರಾಸಾಯನಿಕ ಮತ್ತು ಸಿಂಚನ ಇನ್ಪುಟ್‌ಗಳನ್ನು ಹುಡುಕಿ",
         'optimal_fert': "ಪರಿಪೂರ್ಣ ರಾಸಾಯನಿಕ ಪೋಷಕಾಂಶ",
         'optimal_irr': "ಪರಿಪೂರ್ಣ ಸಿಂಚನ ಪ್ರಮಾಣ",
         'predicted_yield_opt': "ಪರಿಪೂರ್ಣ ಇನ್ಪುಟ್‌ಗಳೊಂದಿಗೆ ಮುನ್ಸೂಚನೆ ಮಾಡಿದ ಉತ್ಪಾದನೆ",
-        'improvement': "ಪ್ರಸ್ತುತ ಇನ್ಪುಟ್‌ಗಳಿಗಿಂತ ಸುಧಾರಣೆ"
+        'improvement': "ಪ್ರಸ್ತುತ ಇನ್ಪುಟ್‌ಗಳಿಗಿಂತ ಸುಧಾರಣೆ",
+        'models_not_loaded': "ಮಾದರಿ ಲೋಡ್ ಆಗುತ್ತಿಲ್ಲ. ದಯವಿಟ್ಟು 'models/' ಡೈರಕ್ಟರಿಯಲ್ಲಿ ಮಾದರಿ ಫೈಲ್‌ಗಳನ್ನು ಖಚಿತಗೊಳಿಸಿ."
     }
 }
 # --------------------- End Language dictionaries ---------------------
@@ -79,7 +82,8 @@ def load_models():
             except Exception as e:
                 st.error(f"Error loading model for {crop}: {e}")
         else:
-            st.error(f"Model for {crop} not found at {model_path}. Please run training.")
+            # Don't error loudly for every crop during load; return empty dict and show later
+            pass
     return models
 
 
@@ -151,7 +155,7 @@ def main():
 
     # ----------------- Language Selection -----------------
     lang = st.sidebar.selectbox("Select Language / ಭಾಷೆ ಆಯ್ಕೆಮಾಡಿ", options=['English', 'Kannada'])
-    lang_code = 'en' if lang=='English' else 'kn'
+    lang_code = 'en' if lang == 'English' else 'kn'
     L = LANG_DICT[lang_code]
     # ----------------- End Language Selection -----------------
 
@@ -159,7 +163,7 @@ def main():
 
     models = load_models()
     if not models:
-        st.error("Models not loaded")
+        st.error(L['models_not_loaded'])
         return
 
     st.sidebar.header(L['sidebar_header'])
@@ -178,13 +182,13 @@ def main():
     irrigation_input = st.sidebar.slider(L['irrigation_input'], min_value=100, max_value=2000, value=default_irr, step=50)
     scenario_selection = st.sidebar.selectbox(L['scenario_selection'], SCENARIOS)
     seed_input = st.sidebar.number_input(L['random_seed'], value=0, min_value=0, step=1)
-    seed_val = int(seed_input) if seed_input>0 else None
+    seed_val = int(seed_input) if seed_input > 0 else None
 
     management_inputs = {'fertilizer_kg_ha': fertilizer_input, 'irrigation_m3_ha': irrigation_input}
 
     st.header(f"Results for: {selected_crop}")
 
-    # Initialize session state variables
+    # Initialize session state
     if "simulation_ran" not in st.session_state:
         st.session_state.simulation_ran = False
         st.session_state.predicted_yield = None
@@ -195,7 +199,7 @@ def main():
         st.session_state.best_fert = None
         st.session_state.best_irr = None
 
-    # Run Simulation button
+    # Run Simulation button (sidebar, to match first code)
     if st.sidebar.button(L['run_sim']):
         predicted_yield, summary_data, uncertainty = predict_yield_with_uncertainty(
             selected_crop,
@@ -206,16 +210,19 @@ def main():
             seed=seed_val
         )
         if predicted_yield is None:
-            st.warning(f"Prediction model for {selected_crop} not available or prediction failed")
-            return
+            st.warning(f"Prediction model for {selected_crop} not available or prediction failed.")
+        else:
+            st.session_state.simulation_ran = True
+            st.session_state.predicted_yield = predicted_yield
+            st.session_state.summary_data = summary_data
+            st.session_state.uncertainty = uncertainty
+            # reset optimization flag so user can re-run optimization if desired
+            st.session_state.optimization_done = False
+            st.session_state.best_yield = None
+            st.session_state.best_fert = None
+            st.session_state.best_irr = None
 
-        st.session_state.simulation_ran = True
-        st.session_state.predicted_yield = predicted_yield
-        st.session_state.summary_data = summary_data
-        st.session_state.uncertainty = uncertainty
-        st.session_state.optimization_done = False  # Reset optimization status on new simulation
-
-    # Show simulation results if simulation ran
+    # Display results if simulation ran
     if st.session_state.simulation_ran:
         st.markdown(f"## {L['predicted_yield']}")
         st.success(f"**{st.session_state.predicted_yield:.2f} kg/ha**", icon="📈")
@@ -223,10 +230,56 @@ def main():
             st.write(f"{L['uncertainty']}: {st.session_state.uncertainty:.2f} kg/ha")
 
         # ------------------ Model Validation & Explainability ------------------
-        st.markdown(f"### {L['model_val']}")
-        # (Validation content here if needed)
+        st.markdown("### " + L['model_val'])
+
+        # Primary expected files
+        metrics_file = f"models/validation_reports/{selected_crop.lower()}_metrics.json"
+        shap_img = f"models/validation_reports/{selected_crop.lower()}_shap_summary.png"
+        val_csv = f"models/validation_reports/{selected_crop.lower()}_validation.csv"
+        # Fallback metadata path
+        alt_meta = os.path.join(MODELS_PATH, f"{selected_crop.lower()}_model.joblib.meta.json")
+
+        metrics = None
+        if os.path.exists(metrics_file):
+            try:
+                with open(metrics_file) as f:
+                    metrics = json.load(f)
+            except Exception as e:
+                st.warning(f"Could not read metrics file: {e}")
+        elif os.path.exists(alt_meta):
+            try:
+                with open(alt_meta) as f:
+                    meta = json.load(f)
+                    if 'validation' in meta:
+                        metrics = meta['validation']
+            except Exception as e:
+                st.warning(f"Could not read model metadata: {e}")
+
+        if metrics is not None:
+            st.write("**" + L['val_metrics'] + "**")
+            st.json(metrics)
+        else:
+            st.info("Validation metrics not found. Run training to generate them.")
+
+        # Show SHAP image if available
+        if os.path.exists(shap_img):
+            st.image(shap_img, caption=L['shap_summary'])
+        else:
+            st.info(L['shap_summary'] + " not available.")
+
+        # Validation CSV preview
+        if os.path.exists(val_csv):
+            try:
+                df_val = pd.read_csv(val_csv)
+                st.write(L['validation_sample'])
+                st.dataframe(df_val.head(10))
+            except Exception as e:
+                st.warning(f"Could not read validation CSV: {e}")
+        else:
+            st.info(L['validation_sample'] + " not found.")
         # -----------------------------------------------------------------------
 
+        st.markdown("---")
         col1, col2 = st.columns(2)
         with col1:
             st.subheader(L['scenario_inputs'])
@@ -236,9 +289,7 @@ def main():
             yield_base, _, _ = predict_yield_with_uncertainty(selected_crop, datetime.combine(planting_date, datetime.min.time()), management_inputs, 'NORMAL', models, seed=seed_val)
             optimized_inputs = {'fertilizer_kg_ha': fertilizer_input * 1.2, 'irrigation_m3_ha': irrigation_input * 1.5}
             yield_optimized, _, _ = predict_yield_with_uncertainty(selected_crop, datetime.combine(planting_date, datetime.min.time()), optimized_inputs, 'NORMAL', models, seed=seed_val)
-            comparison_data = {
-                L['difference']: [f"{yield_base:.2f}", f"{yield_optimized:.2f}"]
-            }
+            comparison_data = {"Scenario": ["Base (Normal Weather)", "Optimized (Normal Weather)"], "Predicted Yield (kg/ha)": [f"{yield_base:.2f}", f"{yield_optimized:.2f}"]}
             df_comparison = pd.DataFrame(comparison_data)
             st.dataframe(df_comparison, hide_index=True)
             st.markdown(f"**{L['difference']}:** **{yield_optimized - yield_base:.2f} kg/ha**")
@@ -246,14 +297,14 @@ def main():
         st.markdown("---")
         st.header(L['step10_header'])
 
-        # Auto-run optimization once, only if not already done
-        if not st.session_state.optimization_done:
+        # Button to run optimization (manual) - same behavior as first code
+        if st.button(L['find_optimal']):
             best_yield = -np.inf
             best_fert = None
             best_irr = None
 
-            fert_range = range(50, 301, 10)
-            irr_range = range(100, 2001, 100)
+            fert_range = range(50, 301, 10)       # 50 to 300 kg/ha by 10
+            irr_range = range(100, 2001, 100)    # 100 to 2000 m3/ha by 100
 
             progress_bar = st.progress(0)
             total_steps = len(fert_range) * len(irr_range)
@@ -278,28 +329,24 @@ def main():
                     step_count += 1
                     progress_bar.progress(step_count / total_steps)
 
-            st.session_state.optimization_done = True
-            st.session_state.best_yield = best_yield
-            st.session_state.best_fert = best_fert
-            st.session_state.best_irr = best_irr
+            st.success(f"{L['optimal_fert']}: {best_fert} kg/ha")
+            st.success(f"{L['optimal_irr']}: {best_irr} m³/ha")
+            st.success(f"{L['predicted_yield_opt']}: {best_yield:.2f} kg/ha")
 
-        # Display optimized results directly
-        st.success(f"{L['optimal_fert']}: {st.session_state.best_fert} kg/ha")
-        st.success(f"{L['optimal_irr']}: {st.session_state.best_irr} m³/ha")
-        st.success(f"{L['predicted_yield_opt']}: {st.session_state.best_yield:.2f} kg/ha")
+            # Compare with current inputs
+            current_yield, _, _ = predict_yield_with_uncertainty(
+                selected_crop,
+                datetime.combine(planting_date, datetime.min.time()),
+                management_inputs,
+                scenario_selection,
+                models,
+                seed=seed_val
+            )
+            if current_yield is not None:
+                diff = best_yield - current_yield
+                st.info(f"{L['improvement']}: {diff:.2f} kg/ha")
 
-        current_yield, _, _ = predict_yield_with_uncertainty(
-            selected_crop,
-            datetime.combine(planting_date, datetime.min.time()),
-            management_inputs,
-            scenario_selection,
-            models,
-            seed=seed_val
-        )
-        if current_yield is not None:
-            diff = st.session_state.best_yield - current_yield
-            st.info(f"{L['improvement']}: {diff:.2f} kg/ha")
-
+    # end if simulation_ran
 
 if __name__ == "__main__":
     main()
