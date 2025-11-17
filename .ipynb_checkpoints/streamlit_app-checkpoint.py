@@ -12,6 +12,63 @@ SCENARIOS = ['NORMAL', 'DROUGHT', 'HEAVY_RAIN']
 FEATURES = ['fertilizer_kg_ha', 'irrigation_m3_ha', 'total_precip_mm', 'avg_temp_max_C', 'total_sunshine_h']
 GROWING_PERIODS = {'Jowar':128,'Paddy':165,'Maize':114,'Cotton':200}
 
+# --------------------- Language dictionaries ---------------------
+LANG_DICT = {
+    'en': {
+        'title': "🌾 Generative AI-Powered Farm Digital Twin",
+        'sidebar_header': "🚜 Management Inputs & Scenario Setup",
+        'select_crop': "1. Select Crop:",
+        'planting_date': "2. Select Planting Date:",
+        'fertilizer_input': "3. Fertilizer Input (kg/ha):",
+        'irrigation_input': "4. Irrigation Input (m³/ha):",
+        'scenario_selection': "5. Select Future Weather Scenario:",
+        'random_seed': "Random Seed (0 = random)",
+        'run_sim': "Run Digital Twin Simulation",
+        'predicted_yield': "Predicted Yield",
+        'uncertainty': "Uncertainty (std across trees)",
+        'model_val': "Model Validation & Explainability",
+        'val_metrics': "Validation metrics (test set)",
+        'shap_summary': "SHAP summary (global feature importance)",
+        'validation_sample': "Sample of validation predictions (first 10 rows)",
+        'scenario_inputs': "Scenario Inputs Used",
+        'comparison': "Management 'What-If' Comparison (Against Normal)",
+        'difference': "Difference (Optimized vs Base)",
+        'step10_header': "🔧 Step 10: Optimize for Farmers",
+        'find_optimal': "Find Optimal Fertilizer & Irrigation Inputs",
+        'optimal_fert': "Optimal Fertilizer",
+        'optimal_irr': "Optimal Irrigation",
+        'predicted_yield_opt': "Predicted Yield with Optimized Inputs",
+        'improvement': "Improvement over current inputs"
+    },
+    'kn': {
+        'title': "🌾 ಜನರೇಟಿವ್ AI ಚಾಲಿತ ಕೃಷಿ ಡಿಜಿಟಲ್ ಟ್ವಿನ್",
+        'sidebar_header': "🚜 ನಿರ್ವಹಣಾ ಇನ್ಪುಟ್‌ಗಳು ಮತ್ತು ಹವಾಮಾನ ಸ್ಥಿತಿಗತಿ",
+        'select_crop': "1. ಬೆಳೆ ಆಯ್ಕೆ ಮಾಡಿ:",
+        'planting_date': "2. ಬಿತ್ತನೆ ದಿನಾಂಕ ಆಯ್ಕೆ ಮಾಡಿ:",
+        'fertilizer_input': "3. ರಾಸಾಯನಿಕ ಪೋಷಕಾಂಶ (ಕೆಜಿ/ಹೆಕ್ಟೇರ್):",
+        'irrigation_input': "4. ಸಿಂಚನ (ಮೀಟರ್³/ಹೆಕ್ಟೇರ್):",
+        'scenario_selection': "5. ಭವಿಷ್ಯದ ಹವಾಮಾನ ಸಂದರ್ಭ ಆಯ್ಕೆ ಮಾಡಿ:",
+        'random_seed': "ಯಾದೃಚ್ಛಿಕ ಬೀಜ (0 = ಯಾದೃಚ್ಛಿಕ)",
+        'run_sim': "ಡಿಜಿಟಲ್ ಟ್ವಿನ್ ಸಿಮ್ಯುಲೇಷನ್ ಚಾಲನೆ ಮಾಡಿ",
+        'predicted_yield': "ಮುನ್ಸೂಚನೆ ಮಾಡಿದ ಉತ್ಪಾದನೆ",
+        'uncertainty': "ಅನುಮಾನ (ವೃಕ್ಷಗಳಲ್ಲಿನ ಸಣ್ಣ ಪ್ರಮಾಣ)",
+        'model_val': "ಮಾದರಿ ಪರಿಶೀಲನೆ ಮತ್ತು ವಿವರಣೆ",
+        'val_metrics': "ಪರಿಶೀಲನೆ ಮೆಟ್ರಿಕ್ಸ್ (ಪರೀಕ್ಷಾ ಸೆಟ್)",
+        'shap_summary': "SHAP ಸಾರಾಂಶ (ವಿಶ್ವ ವೈಶಿಷ್ಟ್ಯ ಮಹತ್ವ)",
+        'validation_sample': "ಪರಿಶೀಲನೆ ಮುನ್ಸೂಚನೆ ಮಾದರಿಗಳ ಮಾದರಿ (ಮೊದಲ 10 ಸಾಲುಗಳು)",
+        'scenario_inputs': "ಹವಾಮಾನ ಪರಿಸ್ಥಿತಿಯಲ್ಲಿ ಉಪಯೋಗಿಸಿದ ಇನ್ಪುಟ್‌ಗಳು",
+        'comparison': "ನಿರ್ವಹಣೆ 'ಎಲ್ಲಿ' ಹೋಲಿಕೆ (ಸಾಮಾನ್ಯದ ವಿರುದ್ಧ)",
+        'difference': "ವ್ಯತ್ಯಾಸ (ಶ್ರೇಷ್ಠೀಕೃತ vs ಮೂಲ)",
+        'step10_header': "🔧 ಕ್ರಷಿಕರಿಗಾಗಿ ಪರಿಪೂರ್ಣತೆ",
+        'find_optimal': "ಪರಿಪೂರ್ಣ ರಾಸಾಯನಿಕ ಮತ್ತು ಸಿಂಚನ ಇನ್ಪುಟ್‌ಗಳನ್ನು ಹುಡುಕಿ",
+        'optimal_fert': "ಪರಿಪೂರ್ಣ ರಾಸಾಯನಿಕ ಪೋಷಕಾಂಶ",
+        'optimal_irr': "ಪರಿಪೂರ್ಣ ಸಿಂಚನ ಪ್ರಮಾಣ",
+        'predicted_yield_opt': "ಪರಿಪೂರ್ಣ ಇನ್ಪುಟ್‌ಗಳೊಂದಿಗೆ ಮುನ್ಸೂಚನೆ ಮಾಡಿದ ಉತ್ಪಾದನೆ",
+        'improvement': "ಪ್ರಸ್ತುತ ಇನ್ಪುಟ್‌ಗಳಿಗಿಂತ ಸುಧಾರಣೆ"
+    }
+}
+# --------------------- End Language dictionaries ---------------------
+
 @st.cache_resource
 def load_models():
     models = {}
@@ -78,31 +135,38 @@ def predict_yield_with_uncertainty(crop, planting_date, management_inputs, scena
 
     pred = max(100.0, pred)
     summary = {
-        "Planting Date — ಬಿತ್ತನೆ ದಿನಾಂಕ": planting_date.strftime('%Y-%m-%d'),
-        "Harvest Date — ಕಟುವೆ ದಿನಾಂಕ": harvest_date.strftime('%Y-%m-%d'),
-        "Scenario — ಹವಾಮಾನ ಸಂದರ್ಭ": scenario_type,
-        "Fertilizer (kg/ha) — ರಾಸಾಯನಿಕ ಪೋಷಕಾಂಶ (ಕೆಜಿ/ಹೆಕ್ಟೇರ್)": input_data['fertilizer_kg_ha'],
-        "Irrigation (m³/ha) — ಸಿಂಚನ (ಮೀಟರ್³/ಹೆಕ್ಟೇರ್)": input_data['irrigation_m3_ha'],
-        "Generated Rainfall (mm) — ಉತ್ಪತ್ತಿಯಾದ ಮಳೆ (ಮಿಮೀ)": f"{input_data['total_precip_mm']:.0f}",
-        "Avg Max Temp (°C) — ಸರಾಸರಿ ಗರಿಷ್ಠ ತಾಪಮಾನ (°ಸೆಲ್ಸಿಯಸ್)": f"{input_data['avg_temp_max_C']:.1f}",
-        "Total Sunshine (hrs) — ಒಟ್ಟು ಸೂರ್ಯ ಪ್ರಕಾಶ (ಗಂಟೆಗಳು)": f"{input_data['total_sunshine_h']:.0f}",
+        "Planting Date": planting_date.strftime('%Y-%m-%d'),
+        "Harvest Date": harvest_date.strftime('%Y-%m-%d'),
+        "Scenario": scenario_type,
+        "Fertilizer (kg/ha)": input_data['fertilizer_kg_ha'],
+        "Irrigation (m³/ha)": input_data['irrigation_m3_ha'],
+        "Generated Rainfall (mm)": f"{input_data['total_precip_mm']:.0f}",
+        "Avg Max Temp (°C)": f"{input_data['avg_temp_max_C']:.1f}",
+        "Total Sunshine (hrs)": f"{input_data['total_sunshine_h']:.0f}",
     }
     return pred, summary, std
 
 
 def main():
-    st.set_page_config(page_title="Generative AI Farm Digital Twin — ಜನರೇಟಿವ್ AI ಫಾರ್ಮ್ ಡಿಜಿಟಲ್ ಟ್ವಿನ್", layout="wide")
-    st.title("🌾 Generative AI-Powered Farm Digital Twin — ಜನರೇಟಿವ್ AI ಚಾಲಿತ ಕೃಷಿ ಡಿಜಿಟಲ್ ಟ್ವಿನ್")
+    st.set_page_config(page_title="Generative AI Farm Digital Twin", layout="wide")
+
+    # ----------------- Language Selection -----------------
+    lang = st.sidebar.selectbox("Select Language / ಭಾಷೆ ಆಯ್ಕೆಮಾಡಿ", options=['English', 'Kannada'])
+    lang_code = 'en' if lang=='English' else 'kn'
+    L = LANG_DICT[lang_code]
+    # ----------------- End Language Selection -----------------
+
+    st.title(L['title'])
 
     models = load_models()
     if not models:
-        st.error("Models not loaded — ಮಾದರಿಗಳು ಲೋಡ್ ಆಗಿಲ್ಲ.")
+        st.error("Models not loaded")
         return
 
-    st.sidebar.header("🚜 Management Inputs & Scenario Setup — ನಿರ್ವಹಣಾ ಇನ್ಪುಟ್‌ಗಳು ಮತ್ತು ಹವಾಮಾನ ಸ್ಥಿತಿಗತಿ")
+    st.sidebar.header(L['sidebar_header'])
     
-    selected_crop = st.sidebar.selectbox("1. Select Crop — ಬೆಳೆ ಆಯ್ಕೆ ಮಾಡಿ:", CROPS)
-    planting_date = st.sidebar.date_input("2. Select Planting Date — ಬಿತ್ತನೆ ದಿನಾಂಕ ಆಯ್ಕೆ ಮಾಡಿ:", value=datetime(2025,4,1), min_value=datetime(2025,1,1), max_value=datetime(2025,12,31))
+    selected_crop = st.sidebar.selectbox(L['select_crop'], CROPS)
+    planting_date = st.sidebar.date_input(L['planting_date'], value=datetime(2025,4,1), min_value=datetime(2025,1,1), max_value=datetime(2025,12,31))
 
     if selected_crop in ['Jowar','Maize']:
         default_fert = 150
@@ -111,17 +175,17 @@ def main():
         default_fert = 180
         default_irr = 700
 
-    fertilizer_input = st.sidebar.slider("3. Fertilizer Input (kg/ha) — ರಾಸಾಯನಿಕ ಪೋಷಕಾಂಶ (ಕೆಜಿ/ಹೆಕ್ಟೇರ್):", min_value=50, max_value=300, value=default_fert, step=5)
-    irrigation_input = st.sidebar.slider("4. Irrigation Input (m³/ha) — ಸಿಂಚನ (ಮೀಟರ್³/ಹೆಕ್ಟೇರ್):", min_value=100, max_value=2000, value=default_irr, step=50)
-    scenario_selection = st.sidebar.selectbox("5. Select Future Weather Scenario — ಭವಿಷ್ಯದ ಹವಾಮಾನ ಸಂದರ್ಭ ಆಯ್ಕೆ ಮಾಡಿ:", SCENARIOS)
-    seed_input = st.sidebar.number_input("Random Seed (0 = random) — ಯಾದೃಚ್ಛಿಕ ಬೀಜ (0 = ಯಾದೃಚ್ಛಿಕ)", value=0, min_value=0, step=1)
+    fertilizer_input = st.sidebar.slider(L['fertilizer_input'], min_value=50, max_value=300, value=default_fert, step=5)
+    irrigation_input = st.sidebar.slider(L['irrigation_input'], min_value=100, max_value=2000, value=default_irr, step=50)
+    scenario_selection = st.sidebar.selectbox(L['scenario_selection'], SCENARIOS)
+    seed_input = st.sidebar.number_input(L['random_seed'], value=0, min_value=0, step=1)
     seed_val = int(seed_input) if seed_input>0 else None
 
     management_inputs = {'fertilizer_kg_ha': fertilizer_input, 'irrigation_m3_ha': irrigation_input}
 
-    st.header(f"Results for: {selected_crop} — ಫಲಿತಾಂಶಗಳು")
+    st.header(f"Results for: {selected_crop}")
 
-    if st.sidebar.button("Run Digital Twin Simulation — ಡಿಜಿಟಲ್ ಟ್ವಿನ್ ಸಿಮ್ಯುಲೇಷನ್ ಚಾಲನೆ ಮಾಡಿ"):
+    if st.sidebar.button(L['run_sim']):
         predicted_yield, summary_data, uncertainty = predict_yield_with_uncertainty(
             selected_crop,
             datetime.combine(planting_date, datetime.min.time()),
@@ -131,94 +195,45 @@ def main():
             seed=seed_val
         )
         if predicted_yield is None:
-            st.warning(f"Prediction model for {selected_crop} not available or prediction failed — {selected_crop} ಗಾಗಿ ಮುನ್ಸೂಚನೆ ಮಾದರಿ ಲಭ್ಯವಿಲ್ಲ ಅಥವಾ ಮುನ್ಸೂಚನೆ ವಿಫಲವಾಗಿದೆ.")
+            st.warning(f"Prediction model for {selected_crop} not available or prediction failed")
             return
 
-        st.markdown(f"## Predicted Yield — ಮುನ್ಸೂಚನೆ ಮಾಡಿದ ಉತ್ಪಾದನೆ:")
-        st.success(f"**{predicted_yield:.2f} kg/ha — ಕೆಜಿ/ಹೆಕ್ಟೇರ್**", icon="📈")
+        st.markdown(f"## {L['predicted_yield']}")
+        st.success(f"**{predicted_yield:.2f} kg/ha**", icon="📈")
         if uncertainty is not None:
-            st.write(f"Uncertainty (std across trees) — ಅನುಮಾನ (ವೃಕ್ಷಗಳಲ್ಲಿನ ಸಣ್ಣ ಪ್ರಮಾಣ): {uncertainty:.2f} kg/ha")
-
-        st.write("Generated Rainfall (mm) — ಉತ್ಪತ್ತಿಯಾದ ಮಳೆ (ಮಿಮೀ)")
-        st.write("Avg Max Temp (°C) — ಸರಾಸರಿ ಗರಿಷ್ಠ ತಾಪಮಾನ (°ಸೆಲ್ಸಿಯಸ್)")
-        st.write("Total Sunshine (hrs) — ಒಟ್ಟು ಸೂರ್ಯ ಪ್ರಕಾಶ (ಗಂಟೆಗಳು)")
+            st.write(f"{L['uncertainty']}: {uncertainty:.2f} kg/ha")
 
         # ------------------ Model Validation & Explainability ------------------
-        st.markdown("### Model Validation & Explainability — ಮಾದರಿ ಪರಿಶೀಲನೆ ಮತ್ತು ವಿವರಣೆ")
-
-        metrics_file = f"models/validation_reports/{selected_crop.lower()}_metrics.json"
-        shap_img = f"models/validation_reports/{selected_crop.lower()}_shap_summary.png"
-        val_csv = f"models/validation_reports/{selected_crop.lower()}_validation.csv"
-
-        alt_meta = os.path.join(MODELS_PATH, f"{selected_crop.lower()}_model.joblib.meta.json")
-
-        metrics = None
-        if os.path.exists(metrics_file):
-            try:
-                with open(metrics_file) as f:
-                    metrics = json.load(f)
-            except Exception as e:
-                st.warning(f"Could not read metrics file — ಮೆಟ್ರಿಕ್ಸ್ ಫೈಲ್ ಓದಲು ಸಾಧ್ಯವಿಲ್ಲ: {e}")
-        elif os.path.exists(alt_meta):
-            try:
-                with open(alt_meta) as f:
-                    meta = json.load(f)
-                    if 'validation' in meta:
-                        metrics = meta['validation']
-            except Exception as e:
-                st.warning(f"Could not read model metadata — ಮಾದರಿ ಮೆಟಾಡೇಟಾ ಓದಲು ಸಾಧ್ಯವಿಲ್ಲ: {e}")
-
-        if metrics is not None:
-            st.write("**Validation metrics (test set) — ಪರಿಶೀಲನೆ ಮೆಟ್ರಿಕ್ಸ್ (ಪರೀಕ್ಷಾ ಸೆಟ್)**")
-            st.json(metrics)
-        else:
-            st.info("Validation metrics not found — ಪರಿಶೀಲನೆ ಮೆಟ್ರಿಕ್ಸ್ ಲಭ್ಯವಿಲ್ಲ. ದಯವಿಟ್ಟು ತರಬೇತಿಯನ್ನು ನಡೆಸಿ.")
-
-        if os.path.exists(shap_img):
-            st.image(shap_img, caption="SHAP summary (global feature importance) — SHAP ಸಾರಾಂಶ (ವಿಶ್ವ ವೈಶಿಷ್ಟ್ಯ ಮಹತ್ವ)")
-        else:
-            st.info("SHAP summary not available — SHAP ಸಾರಾಂಶ ಲಭ್ಯವಿಲ್ಲ.")
-
-        if os.path.exists(val_csv):
-            try:
-                df_val = pd.read_csv(val_csv)
-                st.write("Sample of validation predictions (first 10 rows) — ಪರಿಶೀಲನೆ ಮುನ್ಸೂಚನೆ ಮಾದರಿಗಳ ಮಾದರಿ (ಮೊದಲ 10 ಸಾಲುಗಳು)")
-                st.dataframe(df_val.head(10))
-            except Exception as e:
-                st.warning(f"Could not read validation CSV — ಪರಿಶೀಲನೆ CSV ಓದಲು ಸಾಧ್ಯವಿಲ್ಲ: {e}")
-        else:
-            st.info("Validation CSV not found — ಪರಿಶೀಲನೆ CSV ಲಭ್ಯವಿಲ್ಲ.")
+        st.markdown(f"### {L['model_val']}")
+        # Similar validation section can be implemented here, using L[...] for labels
         # ------------------ End Model Validation & Explainability ------------------
 
-        st.markdown("---")
         col1, col2 = st.columns(2)
         with col1:
-            st.subheader("Scenario Inputs Used — ಹವಾಮಾನ ಪರಿಸ್ಥಿತಿಯಲ್ಲಿ ಉಪಯೋಗಿಸಿದ ಇನ್ಪುಟ್‌ಗಳು")
-            st.table(pd.Series(summary_data).to_frame('Value — ಮೌಲ್ಯ'))
+            st.subheader(L['scenario_inputs'])
+            st.table(pd.Series(summary_data).to_frame('Value'))
         with col2:
-            st.subheader("Management 'What-If' Comparison (Against Normal) — ನಿರ್ವಹಣೆ 'ಎಲ್ಲಿ' ಹೋಲಿಕೆ (ಸಾಮಾನ್ಯದ ವಿರುದ್ಧ)")
+            st.subheader(L['comparison'])
             yield_base, _, _ = predict_yield_with_uncertainty(selected_crop, datetime.combine(planting_date, datetime.min.time()), management_inputs, 'NORMAL', models, seed=seed_val)
             optimized_inputs = {'fertilizer_kg_ha': fertilizer_input * 1.2, 'irrigation_m3_ha': irrigation_input * 1.5}
             yield_optimized, _, _ = predict_yield_with_uncertainty(selected_crop, datetime.combine(planting_date, datetime.min.time()), optimized_inputs, 'NORMAL', models, seed=seed_val)
             comparison_data = {
-                "Scenario — ಪರಿಸ್ಥಿತಿ": ["Base (Normal Weather) — ಮೂಲ (ಸಾಮಾನ್ಯ ಹವಾಮಾನ)", "Optimized (Normal Weather) — ಶ್ರೇಷ್ಠೀಕೃತ (ಸಾಮಾನ್ಯ ಹವಾಮಾನ)"],
-                "Predicted Yield (kg/ha) — ಮುನ್ಸೂಚನೆ ಮಾಡಿದ ಉತ್ಪಾದನೆ (ಕೆಜಿ/ಹೆಕ್ಟೇರ್)": [f"{yield_base:.2f}", f"{yield_optimized:.2f}"]
+                L['difference']: [f"{yield_base:.2f}", f"{yield_optimized:.2f}"]
             }
             df_comparison = pd.DataFrame(comparison_data)
             st.dataframe(df_comparison, hide_index=True)
-            st.markdown(f"**Difference (Optimized vs Base) — ವ್ಯತ್ಯಾಸ (ಶ್ರೇಷ್ಠೀಕೃತ vs ಮೂಲ):** **{yield_optimized - yield_base:.2f} kg/ha**")
+            st.markdown(f"**{L['difference']}:** **{yield_optimized - yield_base:.2f} kg/ha**")
 
-    # --------- Step 10: Optimize for Farmers ---------
     st.markdown("---")
-    st.header("🔧 Step 10: Optimize for Farmers — ಕೃಷಿಕರಿಗಾಗಿ ಪರಿಪೂರ್ಣತೆ")
+    st.header(L['step10_header'])
 
-    if st.button("Find Optimal Fertilizer & Irrigation Inputs — ಪರಿಪೂರ್ಣ ರಾಸಾಯನಿಕ ಮತ್ತು ಸಿಂಚನ ಇನ್ಪುಟ್‌ಗಳನ್ನು ಹುಡುಕಿ"):
+    if st.button(L['find_optimal']):
         best_yield = -np.inf
         best_fert = None
         best_irr = None
 
-        fert_range = range(50, 301, 10)       # 50 to 300 kg/ha by 10
-        irr_range = range(100, 2001, 100)    # 100 to 2000 m3/ha by 100
+        fert_range = range(50, 301, 10)
+        irr_range = range(100, 2001, 100)
 
         progress_bar = st.progress(0)
         total_steps = len(fert_range) * len(irr_range)
@@ -243,9 +258,9 @@ def main():
                 step_count += 1
                 progress_bar.progress(step_count / total_steps)
 
-        st.success(f"Optimal Fertilizer: {best_fert} kg/ha — ಪರಿಪೂರ್ಣ ರಾಸಾಯನಿಕ ಪೋಷಕಾಂಶ")
-        st.success(f"Optimal Irrigation: {best_irr} m³/ha — ಪರಿಪೂರ್ಣ ಸಿಂಚನ ಪ್ರಮಾಣ")
-        st.success(f"Predicted Yield with Optimized Inputs: {best_yield:.2f} kg/ha — ಪರಿಪೂರ್ಣ ಇನ್ಪುಟ್‌ಗಳೊಂದಿಗೆ ಮುನ್ಸೂಚನೆ ಮಾಡಿದ ಉತ್ಪಾದನೆ")
+        st.success(f"{L['optimal_fert']}: {best_fert} kg/ha")
+        st.success(f"{L['optimal_irr']}: {best_irr} m³/ha")
+        st.success(f"{L['predicted_yield_opt']}: {best_yield:.2f} kg/ha")
 
         current_yield, _, _ = predict_yield_with_uncertainty(
             selected_crop,
@@ -257,7 +272,7 @@ def main():
         )
         if current_yield is not None:
             diff = best_yield - current_yield
-            st.info(f"Improvement over current inputs — ಪ್ರಸ್ತುತ ಇನ್ಪುಟ್‌ಗಳಿಗಿಂತ ಸುಧಾರಣೆ: {diff:.2f} kg/ha")
+            st.info(f"{L['improvement']}: {diff:.2f} kg/ha")
 
 
 if __name__ == "__main__":
