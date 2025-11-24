@@ -2,8 +2,8 @@
     "crop": "Jowar",
     "n_train": 2000,
     "n_test": 500,
-    "mae": 307.526576948401,
-    "rmse": 392.78823227012924,
-    "r2": 0.12128672851715938,
-    "prediction_interval_95_coverage": 0.514
+    "mae": 307.2520975756334,
+    "rmse": 394.0972356775144,
+    "r2": 0.08591184134408969,
+    "prediction_interval_95_coverage": 0.47
 }

@@ -1,26 +1,26 @@
 {
     "features": [
         "fertilizer_kg_ha",
-        "irrigation_m3_ha",
+        "pesticide_l_ha",
         "total_precip_mm",
         "avg_temp_max_C",
         "total_sunshine_h"
     ],
     "units": {
         "fertilizer_kg_ha": "kg/ha",
-        "irrigation_m3_ha": "m3/ha",
+        "pesticide_l_ha": "L/ha",
         "total_precip_mm": "mm",
         "avg_temp_max_C": "degC",
         "total_sunshine_h": "hours"
     },
-    "trained_at": "2025-11-17T10:12:14.493350+00:00",
+    "trained_at": "2025-11-24T04:11:45.417535+00:00",
     "validation_metrics": {
         "crop": "Cotton",
         "n_train": 2000,
         "n_test": 500,
-        "mae": 255.30457054304418,
-        "rmse": 321.6602155529408,
-        "r2": 0.1452790673336135,
-        "prediction_interval_95_coverage": 0.45
+        "mae": 254.44508907465718,
+        "rmse": 321.41999259191215,
+        "r2": 0.10724616857706304,
+        "prediction_interval_95_coverage": 0.422
     }
 }

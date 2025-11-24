@@ -2,8 +2,8 @@
     "crop": "Cotton",
     "n_train": 2000,
     "n_test": 500,
-    "mae": 255.30457054304418,
-    "rmse": 321.6602155529408,
-    "r2": 0.1452790673336135,
-    "prediction_interval_95_coverage": 0.45
+    "mae": 254.44508907465718,
+    "rmse": 321.41999259191215,
+    "r2": 0.10724616857706304,
+    "prediction_interval_95_coverage": 0.422
 }

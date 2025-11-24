@@ -1,26 +1,26 @@
 {
     "features": [
         "fertilizer_kg_ha",
-        "irrigation_m3_ha",
+        "pesticide_l_ha",
         "total_precip_mm",
         "avg_temp_max_C",
         "total_sunshine_h"
     ],
     "units": {
         "fertilizer_kg_ha": "kg/ha",
-        "irrigation_m3_ha": "m3/ha",
+        "pesticide_l_ha": "L/ha",
         "total_precip_mm": "mm",
         "avg_temp_max_C": "degC",
         "total_sunshine_h": "hours"
     },
-    "trained_at": "2025-11-17T10:12:14.005202+00:00",
+    "trained_at": "2025-11-24T04:11:44.852937+00:00",
     "validation_metrics": {
         "crop": "Maize",
         "n_train": 2000,
         "n_test": 500,
-        "mae": 478.3502476761906,
-        "rmse": 600.6655210166574,
-        "r2": 0.10868145759187264,
-        "prediction_interval_95_coverage": 0.448
+        "mae": 476.1186086164149,
+        "rmse": 596.8305366750228,
+        "r2": 0.09366250686949051,
+        "prediction_interval_95_coverage": 0.432
     }
 }

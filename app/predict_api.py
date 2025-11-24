@@ -1,4 +1,3 @@
-# File: app/predict_api.py
 from flask import Flask, request, jsonify
 import joblib
 import os
@@ -7,7 +6,7 @@ import json
 from datetime import datetime, timedelta
 import pandas as pd
 
-app = Flask(_name_)
+app = Flask(__name__)
 
 MODELS_DIR = os.environ.get('MODELS_DIR', 'models')  # configurable
 SUPPORTED_SCENARIOS = {'NORMAL','DROUGHT','HEAVY_RAIN'}
@@ -35,7 +34,7 @@ if os.path.exists(MODELS_DIR):
 
 
 def _validate_request_json(data):
-    required = ['crop','planting_date','fertilizer_kg_ha','irrigation_m3_ha','scenario_type']
+    required = ['crop','planting_date','fertilizer_kg_ha','pesticide_l_ha','scenario_type']
     missing = [k for k in required if k not in data]
     if missing:
         return False, f"Missing required fields: {missing}"
@@ -47,9 +46,9 @@ def _validate_request_json(data):
         return False, "planting_date must be YYYY-MM-DD"
     try:
         float(data['fertilizer_kg_ha'])
-        float(data['irrigation_m3_ha'])
+        float(data['pesticide_l_ha'])
     except Exception:
-        return False, "fertilizer_kg_ha and irrigation_m3_ha must be numeric"
+        return False, "fertilizer_kg_ha and pesticide_l_ha must be numeric"
     return True, None
 
 
@@ -95,7 +94,7 @@ def predict_yield():
 
     planting_date = datetime.strptime(payload['planting_date'], '%Y-%m-%d')
     fertilizer = float(payload['fertilizer_kg_ha'])
-    irrigation = float(payload['irrigation_m3_ha'])
+    pesticide = float(payload['pesticide_l_ha'])
     scenario = payload['scenario_type']
     seed = payload.get('random_seed', None)
     try:
@@ -106,11 +105,11 @@ def predict_yield():
     weather = generate_future_weather_scenario(duration_days, scenario, seed)
 
     meta = METADATA.get(crop_key) or {}
-    features_order = meta.get('features') if meta.get('features') else ['fertilizer_kg_ha','irrigation_m3_ha','total_precip_mm','avg_temp_max_C','total_sunshine_h']
+    features_order = meta.get('features') if meta.get('features') else ['fertilizer_kg_ha','pesticide_l_ha','total_precip_mm','avg_temp_max_C','total_sunshine_h']
     input_vector = {}
     for f in features_order:
         if f == 'fertilizer_kg_ha': input_vector[f] = fertilizer
-        elif f == 'irrigation_m3_ha': input_vector[f] = irrigation
+        elif f == 'pesticide_l_ha': input_vector[f] = pesticide
         else:
             input_vector[f] = weather.get(f)
     X_new = pd.DataFrame([input_vector], columns=features_order)
@@ -149,14 +148,12 @@ def predict_yield():
         "crop": crop_key,
         "predicted_yield_kg_ha": round(predicted_yield, 2),
 
-        # NEW: validation of this specific prediction
         "validation_for_prediction": {
             "uncertainty_std": round(uncertainty_std, 2) if uncertainty_std is not None else None,
             "lower_95": round(lower_95, 2) if lower_95 is not None else None,
             "upper_95": round(upper_95, 2) if upper_95 is not None else None
         },
 
-        # NEW: validation metrics from training
         "model_validation_metrics": {
             "mae": model_validation.get("mae"),
             "rmse": model_validation.get("rmse"),
@@ -168,7 +165,7 @@ def predict_yield():
             "planting_date": payload['planting_date'],
             "harvest_date": (planting_date + timedelta(days=duration_days)).strftime('%Y-%m-%d'),
             "fertilizer_kg_ha": fertilizer,
-            "irrigation_m3_ha": irrigation,
+            "pesticide_l_ha": pesticide,
             "total_precip_mm": round(weather['total_precip_mm'], 1),
             "avg_temp_max_C": round(weather['avg_temp_max_C'], 2),
             "total_sunshine_h": round(weather['total_sunshine_h'], 1)
@@ -177,5 +174,5 @@ def predict_yield():
     return jsonify(response), 200
 
 
-if _name_ == '_main_':
+if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=False)

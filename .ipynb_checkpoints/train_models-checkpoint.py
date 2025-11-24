@@ -1,12 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[2]:
-
-
-# File: models/train_models.py
-# Updated: Adds detailed validation reporting (MAE, RMSE, R2, 95% PI, coverage)
-
 import pandas as pd
 import numpy as np
 import os
@@ -16,6 +10,10 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 import joblib
+
+# Force non-interactive backend before importing pyplot to avoid Tk errors
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 # ---------------------------
@@ -31,7 +29,7 @@ CROPS = ['Jowar', 'Paddy', 'Maize', 'Cotton']
 
 FEATURES = [
     'fertilizer_kg_ha',
-    'irrigation_m3_ha',
+    'pesticide_l_ha',
     'total_precip_mm',
     'avg_temp_max_C',
     'total_sunshine_h'
@@ -129,7 +127,7 @@ for crop in CROPS:
     try:
         fig, ax = plt.subplots(figsize=(6,6))
         ax.scatter(y_test, y_pred, alpha=0.6, s=10)
-        lims = [min(y_test.min(), y_pred.min()), max(y_test.max(), y_pred.max())]
+        lims = [min(np.nanmin(y_test), np.nanmin(y_pred)), max(np.nanmax(y_test), np.nanmax(y_pred))]
         ax.plot(lims, lims, 'r--', linewidth=1)  # identity line
         ax.set_xlabel('y_true (kg/ha)')
         ax.set_ylabel('y_pred (kg/ha)')
@@ -138,6 +136,7 @@ for crop in CROPS:
         plot_path = os.path.join(VALIDATION_DIR, f"{crop.lower()}_true_vs_pred.png")
         fig.savefig(plot_path, dpi=150)
         plt.close(fig)
+        plt.close('all')   # extra safety to release GUI resources
         print(f"Saved scatter plot: {plot_path}")
     except Exception as e:
         print("Warning: could not save plot:", e)
@@ -164,7 +163,7 @@ for crop in CROPS:
         "features": FEATURES,
         "units": {
             "fertilizer_kg_ha": "kg/ha",
-            "irrigation_m3_ha": "m3/ha",
+            "pesticide_l_ha": "L/ha",
             "total_precip_mm": "mm",
             "avg_temp_max_C": "degC",
             "total_sunshine_h": "hours"
@@ -177,8 +176,3 @@ for crop in CROPS:
     print(f"Saved model and metadata to: {model_path} and {meta_file}")
 
 print("\nAll training + validation reports complete.")
-
-
-# In[3]:
-
-

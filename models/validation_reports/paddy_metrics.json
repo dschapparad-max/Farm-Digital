@@ -2,8 +2,8 @@
     "crop": "Paddy",
     "n_train": 2000,
     "n_test": 500,
-    "mae": 549.4506915764991,
-    "rmse": 682.570979508245,
-    "r2": 0.1141922926424428,
-    "prediction_interval_95_coverage": 0.488
+    "mae": 551.7094064747142,
+    "rmse": 685.8174518051434,
+    "r2": 0.042799133662796085,
+    "prediction_interval_95_coverage": 0.446
 }

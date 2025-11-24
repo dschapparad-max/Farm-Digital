@@ -2,8 +2,8 @@
     "crop": "Maize",
     "n_train": 2000,
     "n_test": 500,
-    "mae": 478.3502476761906,
-    "rmse": 600.6655210166574,
-    "r2": 0.10868145759187264,
-    "prediction_interval_95_coverage": 0.448
+    "mae": 476.1186086164149,
+    "rmse": 596.8305366750228,
+    "r2": 0.09366250686949051,
+    "prediction_interval_95_coverage": 0.432
 }
